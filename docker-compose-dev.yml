@@ -3,15 +3,8 @@ services:
     build: .
     ports:
       - 8000:8000
-    environment:
-      - DB_HOSTNAME=db
-      - DB_PORT=5432
-      - DB_PASSWORD=rootUser
-      - DB_NAME=yusuphdarbo
-      - DB_USERNAME=postgres
-      - secret_key=180bcdafaf6959f3ecb1fcae87efbfcdd7c970b30b8018f823d73bdb4093021b
-      - algorithm=HS256
-      - access_token_expire_minutes=30
+    env_file:
+      - ./.env
     depends_on:
       db:
         condition: service_healthy
@@ -25,9 +18,9 @@ services:
     image: postgres:16
 
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: rootUser
-      POSTGRES_DB: yusuphdarbo
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
 
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d yusuphdarbo"]
