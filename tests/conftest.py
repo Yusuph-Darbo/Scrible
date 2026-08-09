@@ -10,7 +10,8 @@ from app.oauth2 import create_access_token
 from app import models
 
 SQLALCHEMY_DATABASE_URL = (
-    f"postgresql://{settings.db_username}:{settings.db_password}"
+    "postgresql://"
+    f"{settings.db_username}:{settings.db_password}"
     f"@{settings.db_hostname}:{settings.db_port}/{settings.db_name}_test"
 )
 
