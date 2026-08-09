@@ -8,6 +8,17 @@ on:
 
 jobs:
   job1:
+    environment:
+      name: testing
+    env:
+      - DB_HOSTNAME={{secrets.DB_HOSTNAME}}
+      - DB_PORT=${{secrets.DB_PORT}}
+      - DB_PASSWORD=${{secrets.DB_PASSWORD}}
+      - DB_NAME=${{secrets.DB_NAME}}
+      - DB_USERNAME=${{secrets.DB_USERNAME}}
+      - secret_key=${{secrets.secret_key}}
+      - algorithm=${{secrets.algorithm}}
+      - access_token_expire_minutes=${{secrets.access_token_expire_minutes}}
     runs-on: ubuntu-latest
     steps:
       - name: Pull repository
