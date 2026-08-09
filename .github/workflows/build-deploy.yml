@@ -1,12 +1,22 @@
 name: Build and Deploy Code
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
-      - name: pulling git repo
+      - name: Pull repository
         uses: actions/checkout@v7
-      - name: say hi to yusuph
-        run: echo "hello yusuph"
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Update pip
+        run: python -m pip install --upgrade pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
