@@ -84,22 +84,22 @@ def test_posts(test_user, session, test_user2):
         {
             "title": "first title",
             "content": "first content",
-            "owner_id": test_user["id"],
+            "user_id": test_user["id"],
         },
         {
             "title": "2nd title",
             "content": "2nd content",
-            "owner_id": test_user["id"],
+            "user_id": test_user["id"],
         },
         {
             "title": "3rd title",
             "content": "3rd content",
-            "owner_id": test_user["id"],
+            "user_id": test_user["id"],
         },
         {
             "title": "3rd title",
             "content": "3rd content",
-            "owner_id": test_user2["id"],
+            "user_id": test_user2["id"],
         },
     ]
 
