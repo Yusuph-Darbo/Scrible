@@ -1,10 +1,32 @@
-# Social Media API
+# Scrible
 
-A RESTful API built with **FastAPI** and **PostgreSQL** for user registration, JWT authentication, post management, and voting.
+A RESTful social media API built with **FastAPI** and **PostgreSQL**, featuring JWT authentication, post management, and a voting system.
 
-**Stack:** Python 3.11 · FastAPI · PostgreSQL 16 · SQLAlchemy · Alembic · JWT · Docker
+## Features
 
-## Setup
+- **User accounts** — registration with hashed passwords
+- **JWT authentication** — login returns a bearer token for protected routes
+- **Posts** — create, read, update, and delete, with pagination and search
+- **Voting** — upvote/remove-vote on posts, with vote counts returned alongside posts
+- **Ownership checks** — only a post's owner can update or delete it
+- **Auto-generated docs** — interactive Swagger UI and ReDoc
+- **Database migrations** — schema versioning via Alembic
+- **Dockerized** — one command to spin up the API and database together
+
+## Tech Stack
+
+| Layer      | Technology              |
+| ---------- | ----------------------- |
+| Language   | Python 3.11             |
+| Framework  | FastAPI                 |
+| Database   | PostgreSQL 16           |
+| ORM        | SQLAlchemy              |
+| Migrations | Alembic                 |
+| Auth       | JWT (PyJWT)             |
+| Testing    | pytest                  |
+| Containers | Docker / Docker Compose |
+
+## Getting Started
 
 ### Prerequisites
 
@@ -27,23 +49,23 @@ ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```
 
-### Docker (recommended)
+### Run with Docker (recommended)
 
 ```bash
-git clone https://github.com/Yusuph-Darbo/social_media_api.git
-cd social_media_api
+git clone https://github.com/Yusuph-Darbo/Scrible.git
+cd Scrible
 # create .env with DB_HOSTNAME=db
 docker compose -f docker-compose-dev.yml up --build
 docker compose -f docker-compose-dev.yml exec api alembic upgrade head
 ```
 
-API runs at `http://localhost:8000`.
+The API is now available at `http://localhost:8000`.
 
-### Local
+### Run Locally
 
 ```bash
-git clone https://github.com/Yusuph-Darbo/social_media_api.git
-cd social_media_api
+git clone https://github.com/Yusuph-Darbo/Scrible.git
+cd Scrible
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 # create .env with DB_HOSTNAME=localhost, then create the database
@@ -51,7 +73,13 @@ alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
-**Migrations:** `alembic upgrade head` · `alembic revision --autogenerate -m "message"` · `alembic downgrade -1`
+### Migrations
+
+```bash
+alembic upgrade head                        # apply latest migrations
+alembic revision --autogenerate -m "message"  # generate a new migration
+alembic downgrade -1                          # roll back one migration
+```
 
 ## Authentication
 
@@ -59,40 +87,17 @@ uvicorn app.main:app --reload
 2. Log in via `POST /login` with form data (`username` = email, `password`)
 3. Send the returned token on protected routes: `Authorization: Bearer <token>`
 
-## API Routes
-
-| Method   | Path          | Auth | Description                                                           |
-| -------- | ------------- | :--: | --------------------------------------------------------------------- |
-| `GET`    | `/`           |      | Health check                                                          |
-| `POST`   | `/users/`     |      | Register user — body: `{ email, password }`                           |
-| `GET`    | `/users/{id}` |      | Get user by ID                                                        |
-| `POST`   | `/login`      |      | Login — form fields: `username`, `password` → `{ token, token_type }` |
-| `GET`    | `/posts/`     |  ✓   | List posts — query: `limit`, `skip`, `search`                         |
-| `POST`   | `/posts/`     |  ✓   | Create post — body: `{ title, content, published? }`                  |
-| `GET`    | `/posts/{id}` |  ✓   | Get post with vote count                                              |
-| `PUT`    | `/posts/{id}` |  ✓   | Update post (owner only)                                              |
-| `DELETE` | `/posts/{id}` |  ✓   | Delete post (owner only)                                              |
-| `POST`   | `/vote/`      |  ✓   | Vote — body: `{ post_id, dir }` (`1` = upvote, `0` = remove)          |
-
-List/get post responses include `{ post, votes }`. Post updates and deletes return `403` if the caller is not the owner.
-
-## API Docs
+### Interactive Docs
 
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-Use the **Authorize** button in Swagger UI to test protected routes.
+Use the **Authorize** button in Swagger UI to test protected routes with your token.
 
-## Quick Example
+## Running Tests
+
+Tests use `pytest` and expect a separate `<DB_NAME>_test` PostgreSQL database (created automatically per run, using the same credentials as `.env`).
 
 ```bash
-curl -X POST http://localhost:8000/users/ \
-  -H "Content-Type: application/json" \
-  -d '{"email": "user@example.com", "password": "securepassword"}'
-
-curl -X POST http://localhost:8000/login \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "username=user@example.com&password=securepassword"
-
-curl http://localhost:8000/posts/ -H "Authorization: Bearer <token>"
+pytest
 ```
